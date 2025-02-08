@@ -1,0 +1,52 @@
+services:
+    db:
+        image: postgres
+        container_name: db-ticket
+        env_file:
+            - .env
+        networks:
+            - kbs-ticket
+        ports:
+            - "${KBS_DATABASE_PORT}:${KBS_DATABASE_PORT}"
+        environment:
+            - POSTGRES_HOST=${KBS_DATABASE_HOST}
+            - POSTGRES_PORT=${KBS_DATABASE_PORT}
+            - POSTGRES_USER=${KBS_DATABASE_USERNAME}
+            - POSTGRES_PASSWORD=${KBS_DATABASE_PASSWORD}
+            - POSTGRES_DB=${KBS_DATABASE_NAME}
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+            - dbdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${KBS_DATABASE_USERNAME} -d ${KBS_DATABASE_NAME}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            
+    api:
+        image: kbs-ticket-svc:1.0
+        container_name: api
+        restart: unless-stopped
+        env_file: .env
+        networks:
+            - kbs-ticket
+        ports:
+            - 8181:3001
+        build:
+            context: .
+            dockerfile: Dockerfile-dev
+            args:
+                INSTALL_DEV: ${INSTALL_DEV-false}
+        depends_on:
+            # cache:
+            #     condition: service_started # waiting until start
+            db:
+                condition: service_healthy # waiting until heathcheck
+
+networks:
+    kbs-ticket:
+        driver: bridge
+
+volumes:
+    dbdata:
+    cache:
