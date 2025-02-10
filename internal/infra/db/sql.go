@@ -10,24 +10,24 @@ import (
 	"gorm.io/gorm"
 )
 
-func OpenPgsqlConnection(dbConfig *config.KBSDatabase) (*gorm.DB, error) {
+func OpenPgsqlConnection(dbConfig *config.Database) (*gorm.DB, error) {
 
 	var dsn string
 
-	if dbConfig.KBSPassword != "" {
+	if dbConfig.Password != "" {
 		dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-			dbConfig.KBSHost,
-			dbConfig.KBSUsername,
-			dbConfig.KBSPassword,
-			dbConfig.KBSDBName,
-			dbConfig.KBSPort,
+			dbConfig.Host,
+			dbConfig.Username,
+			dbConfig.Password,
+			dbConfig.DBName,
+			dbConfig.Port,
 		)
 	} else {
 		dsn = fmt.Sprintf("host=%s user=%s dbname=%s port=%d sslmode=disable",
-			dbConfig.KBSHost,
-			dbConfig.KBSUsername,
-			dbConfig.KBSDBName,
-			dbConfig.KBSPort,
+			dbConfig.Host,
+			dbConfig.Username,
+			dbConfig.DBName,
+			dbConfig.Port,
 		)
 	}
 
@@ -47,8 +47,8 @@ func OpenPgsqlConnection(dbConfig *config.KBSDatabase) (*gorm.DB, error) {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	sqlDB.SetMaxIdleConns(dbConfig.KBSMaxIdle)
-	sqlDB.SetMaxOpenConns(dbConfig.KBSMaxConn)
-	sqlDB.SetConnMaxLifetime(time.Second * time.Duration(dbConfig.KBSConnMaxLifetime))
+	sqlDB.SetMaxIdleConns(dbConfig.MaxIdle)
+	sqlDB.SetMaxOpenConns(dbConfig.MaxConn)
+	sqlDB.SetConnMaxLifetime(time.Second * time.Duration(dbConfig.ConnMaxLifetime))
 	return db, nil
 }

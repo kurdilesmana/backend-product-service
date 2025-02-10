@@ -5,18 +5,14 @@ import (
 	"net/http"
 
 	config "github.com/kurdilesmana/backend-product-service/configs"
-	"github.com/kurdilesmana/backend-product-service/deps"
 	_ "github.com/kurdilesmana/backend-product-service/docs"
-	grpc_server "github.com/kurdilesmana/backend-product-service/internal/adapters/v1/grpc"
-	"github.com/kurdilesmana/backend-product-service/pkg/kbslog"
-	"github.com/kurdilesmana/backend-product-service/pkg/mid"
-	pb "github.com/kurdilesmana/backend-product-service/proto/ticket"
+	"github.com/kurdilesmana/backend-product-service/pkg/logging"
+	custom_middleware "github.com/kurdilesmana/backend-product-service/pkg/middleware"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"google.golang.org/grpc"
 )
 
-func Http(handler Handler, logger kbslog.Logger, config config.AppConfig) *echo.Echo {
+func Http(handler Handler, logger logging.Logger, config config.AppConfig) *echo.Echo {
 	e := echo.New()
 
 	// Init middleware
@@ -27,15 +23,14 @@ func Http(handler Handler, logger kbslog.Logger, config config.AppConfig) *echo.
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(mid.RequestID)
-	// e.Use(mid.JWTMiddleware())
+	e.Use(custom_middleware.RequestID)
 
 	// Request and Response Middleware
-	reqResTrap := mid.NewReqResMiddleware(logger)
+	reqResTrap := custom_middleware.NewReqResMiddleware(logger)
 	e.Use(reqResTrap.Middle)
 
 	// Timeout middleware
-	middTimeout := mid.MiddlewareTimeout{
+	middTimeout := custom_middleware.MiddlewareTimeout{
 		Timeout: config.MaxRequestTime,
 	}
 	e.Use(middTimeout.HandlerFunc)
@@ -75,11 +70,4 @@ func Http(handler Handler, logger kbslog.Logger, config config.AppConfig) *echo.
 	}
 
 	return e
-}
-
-func GRPC(server *grpc.Server, logger kbslog.Logger, deps deps.Dependency) {
-	// register server
-	ticketService := grpc_server.NewTicketService(deps.TicketService, logger)
-	pb.RegisterTicketServiceServer(server, ticketService)
-
 }

@@ -7,8 +7,5 @@ import (
 
 func main() {
 	dependency := deps.SetupDependencies()
-	go func() {
-		cmd.ExecuteGrpc(dependency)
-	}()
 	cmd.ExecuteHTTP(dependency)
 }

@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/kurdilesmana/backend-product-service/internal/core/models/helperModel"
+	"github.com/kurdilesmana/backend-product-service/pkg/convert"
 	"github.com/labstack/echo/v4"
 )
 
@@ -56,16 +58,23 @@ func ResponseErrWithFormatValidation(ctx echo.Context, message string, validatio
 	)
 }
 
-func ResponseErrValidationWithCode(ctx echo.Context, message string, errMap map[string]interface{}, code int) error {
-
+func ResponseErrValidationWithCode(ctx echo.Context, message string, err error, code int) error {
 	var msg string
+	var errMap string
+	var fieldRequired []string
 
-	if len(errMap) == 0 {
-		msg = message
-	} else {
-		for _, value := range errMap {
-			msg = fmt.Sprintf("%s", value)
-			break
+	if castedObject, ok := err.(validator.ValidationErrors); ok {
+		for _, err := range castedObject {
+			switch err.Tag() {
+			case "required":
+				field := fmt.Sprintf("%v,", convert.ToSnakeCase(err.Field()))
+				fieldRequired = append(fieldRequired, field)
+
+			}
+
+			if len(fieldRequired) > 0 {
+				errMap = fmt.Sprintf("REQUIRED: field %v harus diisi. ", fieldRequired)
+			}
 		}
 	}
 

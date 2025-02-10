@@ -3,10 +3,16 @@ package deps
 import (
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	config "github.com/kurdilesmana/backend-product-service/configs"
+	"github.com/kurdilesmana/backend-product-service/internal/adapters/v1/repositories/healthCheckRepo"
+	"github.com/kurdilesmana/backend-product-service/internal/adapters/v1/repositories/userRepo"
+	"github.com/kurdilesmana/backend-product-service/internal/core/ports/healthCheckPort"
+	"github.com/kurdilesmana/backend-product-service/internal/core/ports/userPort"
+	"github.com/kurdilesmana/backend-product-service/internal/core/services/healthCheckService"
+	"github.com/kurdilesmana/backend-product-service/internal/core/services/userService"
 	"github.com/kurdilesmana/backend-product-service/internal/infra/db"
-	"github.com/kurdilesmana/backend-product-service/pkg/kbslog"
-	"github.com/kurdilesmana/backend-product-service/pkg/kbsvalidator"
+	"github.com/kurdilesmana/backend-product-service/pkg/logging"
 )
 
 const (
@@ -15,13 +21,15 @@ const (
 )
 
 type Dependency struct {
-	Cfg       config.EnvironmentConfig
-	Validator kbsvalidator.Validator
-	Logger    kbslog.Logger
+	Cfg                config.EnvironmentConfig
+	HealthCheckService healthCheckPort.IHealthCheckService
+	UserService        userPort.IUserService
+	Validator          *validator.Validate
+	Logger             *logging.Logger
 }
 
 func SetupDependencies() Dependency {
-	validator := kbsvalidator.New()
+	validator := validator.New()
 
 	// init config
 	config, err := config.LoadENVConfig()
@@ -30,12 +38,10 @@ func SetupDependencies() Dependency {
 	}
 
 	// load logger
-	logger := kbslog.New("info", "stdout")
-	defer logger.Sync() // This script will be executed last
-	defer logger.Info("Done cleanup tasks...")
+	logger := logging.NewLogger("Product-Service")
 
 	// BIG DEPENDENCY STAGE =======================================
-	database, err := db.OpenPgsqlConnection(&config.KBSDatabase)
+	database, err := db.OpenPgsqlConnection(&config.Database)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -48,13 +54,20 @@ func SetupDependencies() Dependency {
 	// BIG DEPENDENCY STAGE END =======================================
 
 	// init repository
+	healthCheckRepository := healthCheckRepo.NewHealthCheckRepo(database, keyTransaction, timeout)
+	userRepository := userRepo.NewUserRepo(database, keyTransaction, timeout, logger)
 
 	//init middleware
 
 	// init service
+	healthCheckService := healthCheckService.NewHealthCheckService(healthCheckRepository, *logger)
+	userService := userService.NewUserService(userRepository, logger)
 
 	return Dependency{
-		Cfg:    config,
-		Logger: logger,
+		Cfg:                config,
+		HealthCheckService: healthCheckService,
+		UserService:        userService,
+		Validator:          validator,
+		Logger:             logger,
 	}
 }

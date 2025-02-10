@@ -15,7 +15,7 @@ import (
 
 func ExecuteHTTP(dependency deps.Dependency) {
 	handler := server.SetupHandler(dependency)
-	httpServer := server.Http(handler, dependency.Logger, dependency.Cfg.AppConfig)
+	httpServer := server.Http(handler, *dependency.Logger, dependency.Cfg.AppConfig)
 
 	// Start HTTP server
 	go func() {

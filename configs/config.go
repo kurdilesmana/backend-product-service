@@ -16,8 +16,9 @@ type EnvironmentConfig struct {
 	Env       string
 	AppConfig AppConfig
 	Database  Database
-	Cache     Redis
-	Log       logging.Logger
+	// Cache     Redis
+	Token Token
+	Log   logging.Logger
 }
 
 type AppConfig struct {
@@ -31,20 +32,6 @@ type Log struct {
 	Path      string
 	Prefix    string
 	Extension string
-}
-
-type Auth struct {
-	Token
-	Otp
-	Link
-}
-
-type Link struct {
-	Duration string
-}
-
-type Otp struct {
-	Duration string
 }
 
 type Token struct {
@@ -86,32 +73,37 @@ func LoadENVConfig() (config EnvironmentConfig, err error) {
 			MaxRequestTime: cast.ToInt(os.Getenv("APP_MAX_REQUEST_TIME")),
 		},
 		Database: Database{
-			Engine:          os.Getenv("_DATABASE_ENGINE"),
-			Host:            os.Getenv("_DATABASE_HOST"),
-			Port:            cast.ToInt(os.Getenv("_DATABASE_PORT")),
-			Username:        os.Getenv("_DATABASE_USERNAME"),
-			Password:        os.Getenv("_DATABASE_PASSWORD"),
-			DBName:          os.Getenv("_DATABASE_NAME"),
-			Schema:          os.Getenv("_DATABASE_SCHEMA"),
-			MaxIdle:         cast.ToInt(os.Getenv("_DATABASE_MAX_IDLE")),
-			MaxConn:         cast.ToInt(os.Getenv("_DATABASE_MAX_CONN")),
-			ConnMaxLifetime: cast.ToInt(os.Getenv("_DATABASE_CONN_LIFETIME")),
+			Engine:          os.Getenv("DATABASE_ENGINE"),
+			Host:            os.Getenv("DATABASE_HOST"),
+			Port:            cast.ToInt(os.Getenv("DATABASE_PORT")),
+			Username:        os.Getenv("DATABASE_USERNAME"),
+			Password:        os.Getenv("DATABASE_PASSWORD"),
+			DBName:          os.Getenv("DATABASE_NAME"),
+			Schema:          os.Getenv("DATABASE_SCHEMA"),
+			MaxIdle:         cast.ToInt(os.Getenv("DATABASE_MAX_IDLE")),
+			MaxConn:         cast.ToInt(os.Getenv("DATABASE_MAX_CONN")),
+			ConnMaxLifetime: cast.ToInt(os.Getenv("DATABASE_CONN_LIFETIME")),
 		},
-		Cache: Redis{
-			Host:         os.Getenv("REDIS_HOST"),
-			Port:         cast.ToInt(os.Getenv("REDIS_PORT")),
-			Username:     os.Getenv("REDIS_USERNAME"),
-			Password:     os.Getenv("REDIS_PASSWORD"),
-			DB:           cast.ToInt(os.Getenv("REDIS_DB")),
-			UseTLS:       cast.ToBool(os.Getenv("REDIS_USE_TLS")),
-			MaxRetries:   cast.ToInt(os.Getenv("REDIS_MAX_RETRIES")),
-			MinIdleConns: cast.ToInt(os.Getenv("REDIS_MIN_IDLE_CONNS")),
-			PoolSize:     cast.ToInt(os.Getenv("REDIS_POOL_SIZE")),
-			PoolTimeout:  cast.ToInt(os.Getenv("REDIS_POOL_TIMEOUT")),
-			MaxConnAge:   cast.ToInt(os.Getenv("REDIS_MAX_CONN_AGE")),
-			ReadTimeout:  cast.ToInt(os.Getenv("REDIS_READ_TIMEOUT")),
-			WriteTimeout: cast.ToInt(os.Getenv("REDIS_WRITE_TIMEOUT")),
+		Token: Token{
+			Issuer:       os.Getenv("JWT_ISSUER"),
+			AccessToken:  AccessToken{Secret: os.Getenv("JWT_ACCESS_SECRET"), Duration: os.Getenv("JWT_ACCESS_DURATION")},
+			RefreshToken: RefreshToken{Secret: os.Getenv("JWT_REFRESH_SECRET"), Duration: os.Getenv("JWT_REFRESH_DURATION"), LongDuration: os.Getenv("JWT_REFRESH_LONG_DURATION")},
 		},
+		// Cache: Redis{
+		// 	Host:         os.Getenv("REDIS_HOST"),
+		// 	Port:         cast.ToInt(os.Getenv("REDIS_PORT")),
+		// 	Username:     os.Getenv("REDIS_USERNAME"),
+		// 	Password:     os.Getenv("REDIS_PASSWORD"),
+		// 	DB:           cast.ToInt(os.Getenv("REDIS_DB")),
+		// 	UseTLS:       cast.ToBool(os.Getenv("REDIS_USE_TLS")),
+		// 	MaxRetries:   cast.ToInt(os.Getenv("REDIS_MAX_RETRIES")),
+		// 	MinIdleConns: cast.ToInt(os.Getenv("REDIS_MIN_IDLE_CONNS")),
+		// 	PoolSize:     cast.ToInt(os.Getenv("REDIS_POOL_SIZE")),
+		// 	PoolTimeout:  cast.ToInt(os.Getenv("REDIS_POOL_TIMEOUT")),
+		// 	MaxConnAge:   cast.ToInt(os.Getenv("REDIS_MAX_CONN_AGE")),
+		// 	ReadTimeout:  cast.ToInt(os.Getenv("REDIS_READ_TIMEOUT")),
+		// 	WriteTimeout: cast.ToInt(os.Getenv("REDIS_WRITE_TIMEOUT")),
+		// },
 	}
 
 	return
