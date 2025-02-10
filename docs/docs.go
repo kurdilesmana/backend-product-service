@@ -40,6 +40,263 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/product": {
+            "post": {
+                "description": "endpoint create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "API create Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNWQxNjY5NS0xZjJlLTQ1...",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Request Parameters",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productModel.ProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response Success",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Response Error",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "get": {
+                "description": "endpoint Product list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "API List Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNWQxNjY5NS0xZjJlLTQ1...",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response Success",
+                        "schema": {
+                            "$ref": "#/definitions/productModel.ProductListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Response Error",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}/delete": {
+            "delete": {
+                "description": "endpoint delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "API delete Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNWQxNjY5NS0xZjJlLTQ1...",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response Success",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Response Error",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}/detail": {
+            "get": {
+                "description": "endpoint detail Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "API Detail Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNWQxNjY5NS0xZjJlLTQ1...",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response Success",
+                        "schema": {
+                            "$ref": "#/definitions/productModel.ProductResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Response Error",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}/update": {
+            "put": {
+                "description": "endpoint Update Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "API Update Product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNWQxNjY5NS0xZjJlLTQ1...",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Request Parameters",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productModel.ProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response Success",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Response Error",
+                        "schema": {
+                            "$ref": "#/definitions/helperModel.BaseResponseModel"
+                        }
+                    }
+                }
+            }
+        },
         "/user/login": {
             "post": {
                 "description": "Login For User",
@@ -110,6 +367,75 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "helperModel.BaseResponseModel": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "productModel.Product": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "product_code": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "productModel.ProductListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/productModel.Product"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "productModel.ProductRequest": {
+            "type": "object",
+            "required": [
+                "product_code",
+                "product_name"
+            ],
+            "properties": {
+                "product_code": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "productModel.ProductResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/productModel.Product"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "userModel.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -137,6 +463,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "kode_user": {
                     "type": "string"
                 },
                 "name": {

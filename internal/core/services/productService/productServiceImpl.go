@@ -19,7 +19,7 @@ type productService struct {
 	log         logging.Logger
 }
 
-func NewproductService(
+func NewProductService(
 	ProductRepo productPort.IProductRepository,
 	logger logging.Logger,
 ) productPort.IProductService {

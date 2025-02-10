@@ -7,8 +7,9 @@ import (
 )
 
 type Handler struct {
-	healtHandler handler.CheckHandler
-	userHandler  handler.UserHandler
+	healtHandler   handler.CheckHandler
+	userHandler    handler.UserHandler
+	productHandler handler.ProductHandler
 }
 
 func SetupHandler(dep deps.Dependency) Handler {
@@ -16,7 +17,8 @@ func SetupHandler(dep deps.Dependency) Handler {
 	validator := validator.New()
 
 	return Handler{
-		healtHandler: handler.NewHealthCheckHandler(dep.HealthCheckService, dep.Logger),
-		userHandler:  handler.NewUserHandler(dep.UserService, dep.Logger, validator),
+		healtHandler:   handler.NewHealthCheckHandler(dep.HealthCheckService, dep.Logger),
+		userHandler:    handler.NewUserHandler(dep.UserService, dep.Logger, validator),
+		productHandler: handler.NewProductHandler(dep.ProductService, dep.Logger, validator),
 	}
 }

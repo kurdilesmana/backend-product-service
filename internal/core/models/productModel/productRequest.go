@@ -11,7 +11,7 @@ type Filter struct {
 	Keyword string `json:"keyword" query:"keyword"`
 }
 
-type FacilitiesListRequest struct {
+type ProductListRequest struct {
 	helperModel.PaginationRequest
 	Filter
 }

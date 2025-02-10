@@ -21,4 +21,12 @@ func routerGroupV1(handler Handler, e *echo.Echo) {
 	userRoute := v1.Group("/user")
 	userRoute.POST("/register", handler.userHandler.CreateHandler)
 	userRoute.POST("/login", handler.userHandler.LoginHandler)
+
+	// product
+	productRoute := v1.Group("/product")
+	productRoute.GET("/list", handler.productHandler.ListProductHandler)
+	productRoute.POST("", handler.productHandler.CreateProductHandler)
+	productRoute.GET("/:id/detail", handler.productHandler.DetailProductHandler)
+	productRoute.PUT("/:id/update", handler.productHandler.UpdateProductHandler)
+	productRoute.DELETE("/:id/delete", handler.productHandler.DeleteProductHandler)
 }

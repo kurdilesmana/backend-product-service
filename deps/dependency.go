@@ -6,10 +6,13 @@ import (
 	"github.com/go-playground/validator/v10"
 	config "github.com/kurdilesmana/backend-product-service/configs"
 	"github.com/kurdilesmana/backend-product-service/internal/adapters/v1/repositories/healthCheckRepo"
+	"github.com/kurdilesmana/backend-product-service/internal/adapters/v1/repositories/productRepo"
 	"github.com/kurdilesmana/backend-product-service/internal/adapters/v1/repositories/userRepo"
 	"github.com/kurdilesmana/backend-product-service/internal/core/ports/healthCheckPort"
+	"github.com/kurdilesmana/backend-product-service/internal/core/ports/productPort"
 	"github.com/kurdilesmana/backend-product-service/internal/core/ports/userPort"
 	"github.com/kurdilesmana/backend-product-service/internal/core/services/healthCheckService"
+	"github.com/kurdilesmana/backend-product-service/internal/core/services/productService"
 	"github.com/kurdilesmana/backend-product-service/internal/core/services/userService"
 	"github.com/kurdilesmana/backend-product-service/internal/infra/db"
 	"github.com/kurdilesmana/backend-product-service/pkg/logging"
@@ -24,6 +27,7 @@ type Dependency struct {
 	Cfg                config.EnvironmentConfig
 	HealthCheckService healthCheckPort.IHealthCheckService
 	UserService        userPort.IUserService
+	ProductService     productPort.IProductService
 	Validator          *validator.Validate
 	Logger             *logging.Logger
 }
@@ -56,17 +60,20 @@ func SetupDependencies() Dependency {
 	// init repository
 	healthCheckRepository := healthCheckRepo.NewHealthCheckRepo(database, keyTransaction, timeout)
 	userRepository := userRepo.NewUserRepo(database, keyTransaction, timeout, logger)
+	productRepository := productRepo.NewProductRepo(database, keyTransaction, timeout, logger)
 
 	//init middleware
 
 	// init service
 	healthCheckService := healthCheckService.NewHealthCheckService(healthCheckRepository, *logger)
-	userService := userService.NewUserService(userRepository, logger)
+	userService := userService.NewUserService(userRepository, config, logger)
+	productService := productService.NewProductService(productRepository, *logger)
 
 	return Dependency{
 		Cfg:                config,
 		HealthCheckService: healthCheckService,
 		UserService:        userService,
+		ProductService:     productService,
 		Validator:          validator,
 		Logger:             logger,
 	}
